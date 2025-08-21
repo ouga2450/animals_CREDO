@@ -10,11 +10,10 @@ class CreateDiagnosisSessions < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :diagnosis_sessions, :session_token, unique:true
+    add_index :diagnosis_sessions, :session_token, unique: true
     # セッション削除用
     add_index :diagnosis_sessions, :expires_at
     # 統計用
     add_index :diagnosis_sessions, :result_animal_type
   end
 end
-
