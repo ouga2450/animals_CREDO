@@ -1,0 +1,14 @@
+h2>結果：<%= @animal[:emoji] %> <%= @animal[:name] %></h2>
+<h3><%= @animal[:title] %></h3>
+<p><%= @animal[:description] %></p>
+
+<h4>特徴</h4>
+<ul>
+  <% @animal[:characteristics].each do |c| %>
+    <li><%= c %></li>
+  <% end %>
+</ul>
+
+<p><%= @animal[:advice] %></p>
+
+<%= link_to "最初に戻る", root_path %>

@@ -5,6 +5,11 @@ class DiagnosisSession < ApplicationRecord
   # 定数定義
   TOTAL_QUESTIONS = 10
 
+  before_validation :set_expiration, on: :create
+  before_validation :generate_session_token, on: :create
+
+  before_create :initialize_progress
+
   validates :session_token, presence: true, uniqueness: true, length: { is: 32 }
   validates :expires_at, presence: true
   validates :result_animal_type, inclusion: { in: ANIMAL_TYPES, allow_blank: true }
@@ -198,11 +203,6 @@ QUESTIONS = [
       advice: '深い知識と洞察で技術の羅針盤になれます。学びを翻訳してチームに還元し、意思決定の質を底上げしましょう。'
     }
   }.freeze
-
-  # コールバック
-  before_create :generate_session_token
-  before_create :initialize_progress
-  before_create :set_expiration
 
   # ビジネスロジックメソッド集
   def current_question

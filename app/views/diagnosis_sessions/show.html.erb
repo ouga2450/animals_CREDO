@@ -1,0 +1,15 @@
+<h2>Q<%= @question_number %> / <%= @total_questions %></h2>
+<p><%= @current_question[:text] %></p>
+
+<%= form_with url: answer_diagnosis_session_path(@session), method: :patch do %>
+  <% @current_question[:options].each_with_index do |opt, i| %>
+    <div>
+      <label>
+        <%= radio_button_tag :option, i, false %>
+        <%= opt[:text] %>
+      </label>
+    </div>
+  <% end %>
+  <p style="color:red;"><%= flash[:alert] %></p>
+  <%= submit_tag "回答する" %>
+<% end %>
