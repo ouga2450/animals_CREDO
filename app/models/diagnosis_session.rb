@@ -1,4 +1,5 @@
 class DiagnosisSession < ApplicationRecord
+  def to_param = session_token
   ANIMAL_TYPES = %w[gorilla crab fox frog penguin].freeze
   CREDO_KEYS = %w[be_open move_fast give_first geek_out take_ownership].freeze
   # 定数定義
@@ -248,7 +249,7 @@ QUESTIONS = [
   end
 
   private
-  
+
   def finalize_result!
     self.completed_at       ||= Time.current
     self.result_animal_type ||= computed_result_animal_type

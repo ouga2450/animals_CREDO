@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   root 'diagnosis_sessions#new'
 
-  resources :diagnosis_sessions, only: [:new, :create, :show] do
+  resources :diagnosis_sessions, param: :token, only: [:new, :create, :show] do
     member do
       patch :answer
       get :result
