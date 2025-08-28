@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Myapp" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>あにまるCREDO</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload" %>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
   </head>
+  <body class="min-h-dvh bg-gradient-to-b from-orange-50 via-orange-100 to-orange-200 text-slate-800 antialiased">
+    <header class="border-b border-slate-200 bg-white/60 backdrop-blur sticky top-0 z-10">
+      <div class="max-w-3xl px-4 py-2 flex items-center justify-between">
+        <%= link_to root_path, class: "flex items-center" do %>
+          <%= image_tag "header.png",
+              alt: "あにまるCREDO",
+              class: "h-10 w-auto object-contain" %>
+        <% end %>
+      </div>
+    </header>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+
+    <% if flash.any? %>
+      <div class="mx-auto max-w-3xl px-4 mt-4 space-y-2">
+        <% flash.each do |type, msg| %>
+          <div class="rounded-xl px-4 py-3 text-sm
+                      <%= type.to_s == 'alert' ? 'bg-rose-50 text-rose-700 border border-rose-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100' %>">
+            <%= msg %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <main class="mx-auto max-w-3xl px-4 py-8">
       <%= yield %>
     </main>
+
+    <footer class="mx-auto max-w-3xl px-4 pb-10 text-center text-xs text-slate-500">
+      <%= Time.current.year %> Animal CREDO
+    </footer>
   </body>
 </html>

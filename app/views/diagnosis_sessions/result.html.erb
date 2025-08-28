@@ -1,14 +1,37 @@
-h2>結果：<%= @animal[:emoji] %> <%= @animal[:name] %></h2>
-<h3><%= @animal[:title] %></h3>
-<p><%= @animal[:description] %></p>
+<div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
+  <div class="flex items-center gap-3">
+    <div class="text-3xl"><%= @animal[:emoji] %></div>
+    <div>
+      <h2 class="text-xl md:text-2xl font-bold tracking-tight"><%= @animal[:name] %></h2>
+      <div class="mt-1 inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
+        <%= @animal[:title] %>
+      </div>
+    </div>
+  </div>
 
-<h4>特徴</h4>
-<ul>
-  <% @animal[:characteristics].each do |c| %>
-    <li><%= c %></li>
+  <p class="mt-4 text-slate-700"><%= @animal[:description] %></p>
+
+  <h3 class="mt-6 font-semibold">あなたの特徴</h3>
+  <ul class="mt-2 grid gap-2">
+    <% @animal[:characteristics].each do |c| %>
+      <li class="flex items-start gap-2">
+        <span class="mt-1 inline-block size-2 rounded-full bg-slate-900"></span>
+        <span class="text-slate-800"><%= c %></span>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if @animal[:advice].present? %>
+    <div class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-800">
+      <div class="text-sm font-semibold mb-1">アドバイス</div>
+      <p class="text-slate-700"><%= @animal[:advice] %></p>
+    </div>
   <% end %>
-</ul>
 
-<p><%= @animal[:advice] %></p>
-
-<%= link_to "最初に戻る", root_path %>
+  <div class="mt-8 flex flex-wrap gap-3">
+    <%= link_to "最初に戻る", root_path,
+      class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50" %>
+    <%= button_to "もう一度診断する", diagnosis_sessions_path, method: :post,
+      class: "inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-white font-medium hover:bg-slate-800" %>
+  </div>
+</div>
