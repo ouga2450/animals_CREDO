@@ -1,11 +1,23 @@
+<% content_for :body_class do %>
+  <%= case @animal_key
+      when "gorilla" then "from-stone-200 via-stone-300 to-stone-400"
+      when "crab"    then "from-red-50 via-red-100 to-red-200"
+      when "penguin" then "from-sky-50 via-sky-100 to-sky-200"
+      when "fox"     then "from-yellow-50 via-yellow-100 to-yellow-200"
+      when "frog"    then "from-green-50 via-green-100 to-green-200"
+      end %>
+<% end %>
+
+<div class="rounded-2xl p-6 md:p-8 text-center text-slate-700">
+<h2 class="text-xl md:text-2xl font-bold tracking-tight">診断結果は ・・・</h2>
+      <%= image_tag @animal[:image],class: "my-2 max-w-xs mx-auto rounded-2xl shadow" %>
+      <h2 class="text-xl md:text-2xl font-bold tracking-tight">「 <%= @animal[:name] %> 」でした！！<%= @animal[:emoji] %></h2>
+</div>
+
 <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
   <div class="flex items-center gap-3">
-    <div class="text-3xl"><%= @animal[:emoji] %></div>
-    <div>
-      <h2 class="text-xl md:text-2xl font-bold tracking-tight"><%= @animal[:name] %></h2>
-      <div class="mt-1 inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
-        <%= @animal[:title] %>
-      </div>
+    <div class="mt-1 inline-flex items-center rounded-full bg-orange-400 px-3 py-1 text-xs font-medium text-white">
+        CREDO：<%= @animal[:primary_credo] %>
     </div>
   </div>
 

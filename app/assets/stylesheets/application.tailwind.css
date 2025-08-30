@@ -1,1 +1,6 @@
 @import "tailwindcss";
+@layer base {
+  body {
+    font-family: 'Zen Maru Gothic', 'Noto Sans JP', system-ui, sans-serif;
+  }
+}

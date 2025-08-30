@@ -134,10 +134,12 @@ QUESTIONS = [
   ANIMAL_CREDO_MAPPING = {
     gorilla: {
       primary_credo: 'take_ownership',
-      name: 'ゴリラ',
+      name: 'ごりら',
       emoji: '🦍',
-      title: 'オーナーシップ全開！責任感ゴリラ',
-      description: '物事を自分ごと化し、最後までやり切るリーダータイプ。課題の優先度とリスクを整理し、迷いなく前に進める。',
+      color: 'bg-red-400',
+      title: '俺に任せろ！みんなのリーダー!',
+      description: '責任感を持ち、最後までやり切るリーダー。課題の優先度とリスクを整理し、迷いなく前に進めるあなたはごりらタイプです！',
+      image: 'results/detail/take_ownership-600.png',
       characteristics: [
         '目的と成果に強くコミットする',
         '問題を自分ごととして引き受ける',
@@ -148,38 +150,41 @@ QUESTIONS = [
     },
     frog: {
       primary_credo: 'be_open',
-      name: 'カエル',
+      name: 'かえる',
       emoji: '🐸',
-      title: 'まっすぐオープン！透明性カエル',
-      description: '情報・判断の背景・学びを率直に共有し、心理的安全性を高めるタイプ。対話を通じて合意形成を進める。',
+      title: '素直で柔軟！オープン＆ポジティブ！',
+      description: '自分の課題や失敗も率直に共有し、アドバイスを受け入れて前向きに改善につなげられる。変化を恐れず柔軟に学び、成長するあなたはかえるタイプです！',
+      image: 'results/detail/be_open-600.png',
       characteristics: [
-        '判断の背景や懸念をオープンに共有する',
-        '失敗も学びとして率直に話す',
-        'フィードバックを歓迎し双方向の対話を促す',
-        '透明性で信頼と連帯感を育てる'
+        '自分の課題やできていないことを素直に認める',
+        'アドバイスを歓迎し、すぐに行動に移す',
+        '失敗も学びとして共有し、改善の工夫を試みる',
+        '変化を成長のチャンスと捉えて柔軟に受け入れる'
       ],
-      advice: 'オープンな姿勢がチームの信頼と学習を加速させます。情報の非対称を減らし、意思決定を軽くしていきましょう。'
+      advice: '素直に学ぶ姿勢は成長の加速装置です。アドバイスを前向きに取り入れて行動することで、信頼が深まり、チームでの活躍の場も広がっていきます。'
     },
     penguin: {
       primary_credo: 'move_fast',
-      name: 'ペンギン',
+      name: 'ぺんぎん',
       emoji: '🐧',
-      title: '素早くスイスイ！ムーブファストペンギン',
-      description: '小さく作って早く出し、検証サイクルを回すタイプ。完璧よりも学びの速度を重視して前進する。',
+      title: '素早く飛び込め！ファーストぺんぎん！',
+      description: '素早く動き、短いサイクルで学びを得て改善を続けられる。失敗を恐れず一歩を踏み出し、学びを得られるあなたはぺんぎんタイプです！',
+      image: 'results/detail/move_fast-600.png',
       characteristics: [
         'MVPで素早くリリースして検証する',
         'タスクを分割し高頻度にデプロイする',
         '迷ったら実験と計測で確かめる',
         '完璧主義よりも学習速度を優先する'
       ],
-      advice: '短いサイクルで仮説検証を回せます。品質は自動化と計測で担保しつつ、価値の届け方を高速に最適化しましょう。'
+      advice: '素早く動くことで学びの機会が増えます。小さな成功体験を積み重ねて自信をつけ、チームのムーブメントメーカーになりましょう。'
     },
     crab: {
       primary_credo: 'give_first',
-      name: 'カニ',
+      name: 'かに',
       emoji: '🦀',
-      title: 'まず与える！ギブファーストカニ',
-      description: '先に与える姿勢で周囲の成功確率を高め、自身の成長にもつなげるタイプ。ナレッジ共有と支援を惜しまない。',
+      title: '誰かのために強くなれる！仲間思いのサポーター！',
+      description: '、自身の成長にもつなげるタイプ。知識共有を欠かさないあなたはかにタイプ。',
+      image: 'results/detail/give_first-600.png',
       characteristics: [
         'ノウハウを文書化して公開する',
         'レビューやメンタリングを積極的に行う',
@@ -190,10 +195,11 @@ QUESTIONS = [
     },
     fox: {
       primary_credo: 'geek_out',
-      name: 'キツネ',
+      name: 'きつね',
       emoji: '🦊',
-      title: '没頭の賢者！ギークアウトキツネ',
+      title: 'エンジニアの探求者！技術を深く楽しむ！',
       description: '技術を深く掘り下げ、検証と計測で本質をつかむタイプ。新しい概念やツールを試し、知の探索を楽しむ。',
+      image: 'results/detail/geek_out-600.png',
       characteristics: [
         '仕組みや原理を徹底的に理解する',
         '計測・検証で根拠を示すのが得意',
@@ -250,6 +256,7 @@ QUESTIONS = [
 
   private
 
+  # 結果を確定して保存
   def finalize_result!
     self.completed_at       ||= Time.current
     self.result_animal_type ||= computed_result_animal_type
@@ -261,7 +268,8 @@ QUESTIONS = [
   def initialize_progress    = self.answers ||= []
 
   def set_expiration         = self.expires_at ||= 1.hour.from_now
-  
+
+  # CREDOごとの点数を集計
   def aggregate_credo_scores
     # 点数の初期化
     totals = CREDO_KEYS.index_with { 0 }
