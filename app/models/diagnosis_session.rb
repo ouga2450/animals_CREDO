@@ -1,4 +1,5 @@
 class DiagnosisSession < ApplicationRecord
+  require "digest"
   def to_param = session_token
   ANIMAL_TYPES = %w[gorilla crab fox frog penguin].freeze
   CREDO_KEYS = %w[be_open move_fast give_first geek_out take_ownership].freeze
@@ -20,112 +21,162 @@ class DiagnosisSession < ApplicationRecord
 QUESTIONS = [
   {
     id: 1,
-    text: "チームでの情報共有、まず何をする？",
+    text: "初めてのエンジニア生活!、あなたはどんな会社で働いてみたい？",
     options: [
-      { text: "判断の背景や懸念を率直に公開する",               scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "タスクを切ってすぐ動き、途中で共有する",           scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "自分の知見をノート化し、全員が使える形で配る",     scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "技術的根拠を徹底調査してから共有する",             scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "責任者としてリスク/スケジュールを明確化し主導",     scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "好きな技術やツールの話を熱く語りあえるチーム",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "アウトプット会など、知識や経験を惜しみなく共有し合うチーム",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "役割をしっかりと任せてもらえて、責任を持って仕事ができるチーム",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "初めてのことや分からないことでも積極的に挑戦させてもらえる",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "分からないことや不安を素直に共有でき、支えてくれるチーム",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 2,
-    text: "障害対応で最初に取る行動は？",
+    text: "文化祭の準備であなたが自然にやっていたことは？",
     options: [
-      { text: "現状と方針を全員に即共有し、透明性を担保",         scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "暫定回避策を即時に適用し被害拡大を止める",         scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "ユーザー連絡やFAQ整備など支援を先に行う",           scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "原因を深掘り・再現性確認・恒久対応案を詰める",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "オーナーとして役割分担と意思決定を引き受ける",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "新しいアイデアや演出を提案する",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "進捗や困っていることをみんなに共有する",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "裏方作業を率先して引き受ける",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "班をまとめて全体の進行を仕切る",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "道具をどんどん買い出しに行き、形にする",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 3,
-    text: "仕様変更の連絡が遅れて入った。あなたは？",
+    text: "旅行の計画を立てるときのあなたの役割は？",
     options: [
-      { text: "前提や影響をオープンにし、議論の場を作る",         scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "影響の少ない所からすぐ修正に取り掛かる",           scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "関係者向けの手順・テンプレを配って支援する",         scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "差分の技術的妥当性を検証して最適解を探る",           scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "責任を持って優先順位・スケジュールを再定義する",     scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "計画を整理して旅程表にまとめる",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "穴場スポットやそこでしかできない体験を調べる",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "全員の希望を聞いてまとめる",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "すぐに調べて、プランにまとめたり予約を進める",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "行きたい場所やしたいことなど自分の意見を伝える",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 4,
-    text: "コードレビューで一番重視することは？",
+    text: "チームで成果物を発表するとき、あなたは？",
     options: [
-      { text: "指摘の意図を丁寧に言語化し、対話を促す",           scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "小さく頻繁に出して回転を上げる",                   scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "Tipsやサンプルコードを添えて相手の生産性を上げる",   scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "根拠のある設計議論・計測結果に基づく指摘",           scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "品質・納期の責任を担い、必要なら方針を決める",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "発表の進行役やリーダーを務める",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "工夫した技術的ポイントやこだわりを語る",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "失敗も含めて正直に話す",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "短時間でも形にして発表を優先する",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "他チームの成果にもコメントや拍手を送る",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 5,
-    text: "学習や知見共有、どう進める？",
+    text: "アルバイトでトラブルが発生! あなたの行動は？",
     options: [
-      { text: "学びの過程・失敗も含めて公開し続ける",             scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "必要最低限を素早くキャッチアップして実装",         scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "社内勉強会や資料を作り、まず与える",               scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "原理・仕組みを掘り下げて深く理解する",               scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "目標を自分ごと化し、結果に責任を持つ",               scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "みんなを集めて対応を指示する",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "原因を突き止めるためにデータを調べる",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "状況や影響をすぐに共有する",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "当事者を責めずフォローする",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "まずは応急処置で被害を止める",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 6,
-    text: "リリース直前に軽微な改善アイデアが浮かんだ。",
+    text: "SNSで発信するときに意識するのは？",
     options: [
-      { text: "影響や判断理由を公開して合意を取りに行く",           scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "安全にローリスクで入れられる範囲だけ即対応",         scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "ユーザー価値が高いなら他タスクを巻き取って支援",     scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "計測して効果を検証し、次のサイクルに回す提案",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "スコープ管理者として品質・納期を優先して判断",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "失敗や学びなど自分のことをオープンに発信",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "気になる技術やアプリをすぐに試してレビュー投稿",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "技術記事やツールの紹介を投稿",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "他の人の投稿にコメントやいいねをする",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "イベントを募ったり、人を巻き込む",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
     ]
   },
   {
     id: 7,
-    text: "朝会で昨日できなかったことがあった。",
+    text: "新しい技術を学ぶことに！あなたはどうする？",
     options: [
-      { text: "ブロッカーや背景を率直に共有し助けを仰ぐ",         scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "今日やる最小タスクに素早く切り替える",             scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "他の人の進捗を助ける行動を先にする",                 scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "詰まった箇所を技術的に深掘りして解法を共有",         scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "自分のコミットメントを見直し、責任を明確化",         scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "詳しい人に教えてもらえるように勉強会を企画する",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "その技術の仕組みや原理を徹底的に調べる",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "まずは自分の手でチュートリアルを動かしてみる",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "分からないことがあれば使っている人に相談する",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "使い方をまとめて技術記事にする",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 8,
-    text: "ユーザーから改善要望が多数。どう反応する？",
+    text: "勉強会に参加したときのあなたは？",
     options: [
-      { text: "ロードマップと優先度を公開し透明性を上げる",         scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "小さな改善から素早く出してフィードバック回収",       scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "まずはヘルプやテンプレでユーザー支援を手厚く",       scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "計測基盤を整備し、効果検証の仕組みを作る",           scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "責任者としてKPI/デッドラインを設定して推進",         scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "質問や回答を深堀りして議論を盛り上げる",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "会の進行やまとめ役を買って出る",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "質問や不安をオープンにする",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "他の人の質問にも答えてあげる",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "学んだことをすぐに試してみる",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 9,
-    text: "社内勉強会のテーマを選ぶなら？",
+    text: "友達の誕生日サプライズであなたがすることは？",
     options: [
-      { text: "組織の課題や学びをオープンに話せるテーマ",           scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "短時間で成果に直結するハンズオン",                   scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "社内に還元できるベストプラクティス共有",             scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "低レイヤや内部実装を徹底的に解説する深掘り会",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "成果の責任を持つプロジェクト運営ノウハウ",           scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "ばれないように友達の好きなものをリサーチする",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "その友達が喜びそうなサプライズ案を考える",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "サプライズの計画を立てて実行に移す",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "みんなにこっそり計画を共有して協力を募る",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "場所や時間をすぐに決めて準備を始める",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   },
   {
     id: 10,
-    text: "大きな失敗をした後、最初にやることは？",
+    text: "将来エンジニアとして働く自分を想像したら？",
     options: [
-      { text: "原因・判断・学びを包み隠さず共有する",               scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "すぐに復旧・再発防止の短期対策を回す",               scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } },
-      { text: "関係者へのサポートやお詫び対応を最優先する",         scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
-      { text: "技術的なポストモーテムを書き、知見を残す",           scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
-      { text: "オーナーとして責任を引き受け、仕組みを改める",       scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } }
+      { text: "プロジェクトを引っ張るリーダー",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 5 } },
+      { text: "技術が好きでずっと学び続ける人",
+        scores: { be_open: 0, move_fast: 0, give_first: 0, geek_out: 5, take_ownership: 0 } },
+      { text: "周りを助けて感謝される人",
+        scores: { be_open: 0, move_fast: 0, give_first: 5, geek_out: 0, take_ownership: 0 } },
+      { text: "わからないことを率直に質問できる人",
+        scores: { be_open: 5, move_fast: 0, give_first: 0, geek_out: 0, take_ownership: 0 } },
+      { text: "プロトタイプをすぐ作って試す人",
+        scores: { be_open: 0, move_fast: 5, give_first: 0, geek_out: 0, take_ownership: 0 } }
     ]
   }
 ].freeze
@@ -246,12 +297,23 @@ QUESTIONS = [
   def computed_result_animal_type
     return nil unless completed?
     credo_totals = aggregate_credo_scores
-    top_credo = credo_totals.max_by { |(k, v)| v }&.first&.to_s
+    top_credo = pick_top_credo(credo_totals)&.to_s
     return nil unless top_credo
 
     # credo -> animal の逆引き
     credo_to_animal = ANIMAL_CREDO_MAPPING.map { |animal, h| [ h[:primary_credo], animal.to_s ] }.to_h
     credo_to_animal[top_credo]
+  end
+
+  def pick_top_credo(credo_totals)
+    return nil if credo_totals.blank?
+
+    max   = credo_totals.values.max
+    ties  = credo_totals.select { |_k, v| v == max }.keys
+    return ties.first if ties.size == 1
+
+    rng = deterministic_rng("#{session_token}-tiebreak")
+    ties.sample(random: rng)
   end
 
   private
@@ -301,5 +363,11 @@ QUESTIONS = [
         errors.add(:answers, "invalid option index at Q#{i + 1}")
       end
     end
+  end
+
+  # セッション内で再現可能な乱数生成器
+  def deterministic_rng(seed_str)
+    int_seed = Digest::MD5.hexdigest(seed_str).to_i(16) % 2**31
+    Random.new(int_seed)
   end
 end
