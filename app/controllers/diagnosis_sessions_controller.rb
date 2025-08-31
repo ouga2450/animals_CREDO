@@ -1,5 +1,5 @@
 class DiagnosisSessionsController < ApplicationController
-    before_action :find_session, only: [:show, :answer, :result]
+    before_action :find_session, only: [ :show, :answer, :result ]
   # 診断開始画面
   def new; end
 
