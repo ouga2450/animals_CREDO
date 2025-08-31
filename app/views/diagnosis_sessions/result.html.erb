@@ -1,0 +1,77 @@
+<% content_for :body_class do %>
+  <%= case @animal_key
+      when "gorilla" then "from-stone-200 via-stone-300 to-stone-400"
+      when "crab"    then "from-red-50 via-red-100 to-red-200"
+      when "penguin" then "from-sky-50 via-sky-100 to-sky-200"
+      when "fox"     then "from-yellow-50 via-yellow-100 to-yellow-200"
+      when "frog"    then "from-green-50 via-green-100 to-green-200"
+      end %>
+<% end %>
+
+<% content_for :meta do %>
+  <% key      = @animal[:primary_credo] %>
+  <% title    = "診断結果： #{@animal[:name]}#{@animal[:emoji]}｜あにまるCREDO" %>
+  <% desc     = @animal[:description] %>
+  <% tw_img   = image_url(@animal[:image]) %>  <%# 正方形画像 %>
+
+  <!-- Twitter Card（正方形 Summary） -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="<%= title %>">
+  <meta name="twitter:description" content="動物であなたのエンジニアマインドを診断！">
+  <meta name="twitter:image"       content="<%= tw_img %>">
+  <meta name="twitter:image:alt"   content="<%= @animal[:name] %>のイラスト">
+
+<% end %>
+
+<div class="rounded-2xl p-6 md:p-8 text-center text-slate-700">
+<h2 class="text-xl md:text-2xl font-bold tracking-tight">診断結果は ・・・</h2>
+      <%= image_tag @animal[:image],class: "my-2 max-w-xs mx-auto rounded-2xl shadow" %>
+      <h2 class="text-xl md:text-2xl font-bold tracking-tight">「 <%= @animal[:name] %> 」でした！！<%= @animal[:emoji] %></h2>
+</div>
+
+<div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8">
+  <div class="flex items-center gap-3">
+    <div class="mt-1 inline-flex border border-slate-300 items-center rounded-full bg-white px-3 py-1 text-xs font-medium">
+        CREDO：<%= @animal[:primary_credo] %>
+    </div>
+  </div>
+
+  <p class="mt-4 text-slate-700"><%= @animal[:description] %></p>
+
+  <h3 class="mt-6 font-semibold">あなたの特徴</h3>
+  <ul class="mt-2 grid gap-2">
+    <% @animal[:characteristics].each do |c| %>
+      <li class="flex items-start gap-2">
+        <span class="mt-1 inline-block size-2 rounded-full bg-slate-900"></span>
+        <span class="text-slate-800"><%= c %></span>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if @animal[:advice].present? %>
+    <div class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-800">
+      <div class="text-sm font-semibold mb-1">アドバイス</div>
+      <p class="text-slate-700"><%= @animal[:advice] %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-8 flex flex-wrap gap-3">
+    <%= link_to "最初に戻る", root_path,
+      class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 active:bg-white hover:scale-105" %>
+    <%= button_to "もう一度診断する", diagnosis_sessions_path, method: :post,
+      class: "inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-700 font-medium hover:bg-slate-50 active:bg-white hover:scale-105" %>
+
+    <% share_url  = result_diagnosis_session_url(@session) %>
+    <% tweet_text = "診断結果は・・・#{@animal[:name]}でした！！#{@animal[:emoji]}
+#あにまるCREDO" %>
+    <% intent_url = "https://twitter.com/intent/tweet?text=#{ERB::Util.url_encode(tweet_text)}&url=#{ERB::Util.url_encode(share_url)}" %>
+    <%= link_to intent_url,
+                target: "_blank", rel: "noopener",
+                class: "inline-flex items-center justify-center rounded-xl bg-black px-5 py-2 text-white font-medium hover:bg-slate-900 hover:scale-105 active:bg-black transition" do %>
+      <%= image_tag "logo-white.png",
+                    alt: "X-logo",
+                    class: "h-5 w-auto object-contain" %>
+        <span class="ml-2">シェア</span>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<% content_for :body_class, "from-orange-50 via-orange-100 to-orange-200 text-slate-800" %>
+
+<% progress = ((@question_number.to_f / @total_questions) * 100).round %>
+
+<div class="mb-6">
+  <div class="flex items-end justify-between">
+    <div>
+      <div class="mt-1 font-semibold"><%= @question_number %> / <%= @total_questions %></div>
+    </div>
+    <div class="text-xs text-slate-500"><%= progress %>%</div>
+  </div>
+  <div class="mt-2 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+    <div class="h-full bg-orange-500 transition-all" style="width:<%= progress %>%"></div>
+  </div>
+</div>
+
+<div class="rounded-2xl border border-orange-200 bg-white/60 shadow-sm p-6 md:p-8">
+  <h2 class="text-xl md:text-2xl font-bold tracking-tight">Q<%= @question_number %></h2>
+  <p class="mt-2 text-slate-700"><%= @current_question[:text] %></p>
+
+  <%= form_with url: answer_diagnosis_session_path(@session), method: :patch, html: { id: "answer-form" } do %>
+    <div class="mt-6 grid gap-3">
+      <% @current_question[:options].each_with_index do |opt, i| %>
+        <label class="block rounded-xl border border-slate-200  bg-white hover:border-slate-300 has-[:checked]:border-orange-300 has-[:checked]:bg-slate-50 cursor-pointer transition">
+          <div class="flex items-start gap-3 p-4">
+            <%= radio_button_tag :option, i, false, class: "mt-1" %>
+            <div class="text-slate-800"><%= opt[:text] %></div>
+          </div>
+        </label>
+      <% end %>
+    </div>
+
+    <div class="mt-6 flex items-center gap-3">
+      <%= submit_tag "回答する",
+        class: "w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-orange-400 px-5 py-3 text-white font-medium hover:scale-105 hover:bg-orange-300 active:bg-orange-600 transition" %>
+      <span class="text-xs text-slate-500">数字キー(1–5)で選択・Enterで送信</span>
+    </div>
+  <% end %>
+</div>
+
+<script>
+// 数字キーで選択、Enterで送信
+document.addEventListener('keydown', (e) => {
+  const form = document.getElementById('answer-form');
+  if (!form) return;
+
+  // 1〜5 でラジオ選択
+  if (e.key >= '1' && e.key <= '5') {
+    const idx = parseInt(e.key, 10) - 1;
+    const target = form.querySelector(`input[name="option"][value="${idx}"]`);
+    if (target) {
+      target.checked = true;
+      // 選んだらすぐ送信したい場合は以下を有効化
+      // form.submit();
+    }
+  }
+  // Enterで送信（テキスト入力中は除外）
+  if (e.key === 'Enter') {
+    const active = document.activeElement;
+    const typing = ['INPUT','TEXTAREA'].includes(active?.tagName);
+    if (!typing) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  }
+});
+</script>
