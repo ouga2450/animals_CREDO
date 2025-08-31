@@ -183,7 +183,7 @@ QUESTIONS = [
       name: 'かに',
       emoji: '🦀',
       title: '誰かのために強くなれる！仲間思いのサポーター！',
-      description: '、自身の成長にもつなげるタイプ。知識共有を欠かさないあなたはかにタイプ。',
+      description: '誰かのために動くことで、自身の成長にもつなげるタイプ。知識共有を欠かさないあなたはかにタイプ。',
       image: 'results/detail/give_first-600.png',
       characteristics: [
         'ノウハウを文書化して公開する',

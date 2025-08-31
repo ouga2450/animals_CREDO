@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :diagnosis_sessions, param: :token, only: [:new, :create, :show] do
     member do
       patch :answer
-      get :result
+      get   :result
     end
   end
 end
